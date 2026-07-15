@@ -1,5 +1,9 @@
 "use client";
 
+// Forzamos render dinámico: esta página usa useSearchParams() y no debe
+// prerenderizarse en build (evita el error "missing suspense boundary").
+export const dynamic = "force-dynamic";
+
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
