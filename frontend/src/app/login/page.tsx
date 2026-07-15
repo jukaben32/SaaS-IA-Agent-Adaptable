@@ -1,17 +1,14 @@
 "use client";
 
-// Forzamos render dinámico: esta página usa useSearchParams() y no debe
-// prerenderizarse en build (evita el error "missing suspense boundary").
-export const dynamic = "force-dynamic";
-
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { Loader2 } from "lucide-react";
 
-export default function LoginPage() {
+// Componente interno: usa useSearchParams(), por eso debe ir dentro de <Suspense>.
+function LoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -71,5 +68,14 @@ export default function LoginPage() {
         </button>
       </form>
     </AuthCard>
+  );
+}
+
+// Suspense boundary requerido por Next para useSearchParams() en build.
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen grid place-items-center text-muted">Cargando…</div>}>
+      <LoginInner />
+    </Suspense>
   );
 }
